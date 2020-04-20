@@ -36,7 +36,6 @@ contract StarNotary is ERC721 {
         starsForSale[_tokenId] = _price;
     }
 
-
     // Function that allows you to convert an address into a payable address
     function _make_payable(address x) internal pure returns (address payable) {
         return address(uint160(x));
@@ -47,17 +46,21 @@ contract StarNotary is ERC721 {
         uint256 starCost = starsForSale[_tokenId];
         address ownerAddress = ownerOf(_tokenId);
         require(msg.value > starCost, "You need to have enough Ether");
+        // Transfer the asset (star) from the ownerAddress to the address of the sender of this transaction (the current user)
         _transferFrom(ownerAddress, msg.sender, _tokenId); // We can't use _addTokenTo or_removeTokenFrom functions, now we have to use _transferFrom
         address payable ownerAddressPayable = _make_payable(ownerAddress); // We need to make this conversion to be able to use transfer() function to transfer ethers
-        ownerAddressPayable.transfer(starCost);
+        ownerAddressPayable.transfer(starCost); // Transfer to owner the amount equivalent to the cost of the star
         if(msg.value > starCost) {
-            msg.sender.transfer(msg.value - starCost);
+            msg.sender.transfer(msg.value - starCost); // Remaining balance goes back to the sender
         }
     }
 
     // Implement Task 1 lookUptokenIdToStarInfo
     function lookUptokenIdToStarInfo (uint _tokenId) public view returns (string memory) {
         //1. You should return the Star saved in tokenIdToStarInfo mapping
+        require(ownerOf(_tokenId) == msg.sender, "You can't look at the details of the star you don't own.");
+        Star memory starInfo = tokenIdToStarInfo[_tokenId];   
+        return starInfo.name;        
     }
 
     // Implement Task 1 Exchange Stars function
@@ -66,12 +69,36 @@ contract StarNotary is ERC721 {
         //2. You don't have to check for the price of the token (star)
         //3. Get the owner of the two tokens (ownerOf(_tokenId1), ownerOf(_tokenId1)
         //4. Use _transferFrom function to exchange the tokens.
+        require(ownerOf(_tokenId1) == msg.sender, "You can't look at the details of the star you don't own.");
+        require(ownerOf(_tokenId2) == msg.sender, "You can't look at the details of the star you don't own.");
+        
+        tokenIdToStarInfo[_tokenId1] = tokenIdToStarInfo[_tokenId2];
+        tokenIdToStarInfo[_tokenId2] = tokenIdToStarInfo[_tokenId1];
+
+        address owner1Address = ownerOf(_tokenId1);
+        address owner2Address = ownerOf(_tokenId2);
+
+        transferStar(owner1Address, _tokenId2);
+        transferStar(owner2Address, _tokenId1);        
     }
 
     // Implement Task 1 Transfer Stars
     function transferStar(address _to1, uint256 _tokenId) public {
         //1. Check if the sender is the ownerOf(_tokenId)
         //2. Use the transferFrom(from, to, tokenId); function to transfer the Star
+        require(ownerOf(_tokenId) == msg.sender, "Sender should be the owner of the token.");
+
+        uint256 starCost = starsForSale[_tokenId];
+        address ownerAddress = ownerOf(_tokenId);
+
+        _transferFrom(ownerAddress, _to1, _tokenId); // Move the star from owner to specified address (_to1)
+        address payable ownerAddressPayable = _make_payable(ownerAddress);
+        address payable toAddressPayable = _make_payable(_to1);        
+        ownerAddressPayable.transfer(starCost); // increase the balance of the owner by the cost of the star.
+        if(toAddressPayable.balance > starCost) {
+            toAddressPayable.transfer(_to1.balance - starCost); // Reduce the balance of the address who purchased the star.
+        }
+
     }
 
 }
