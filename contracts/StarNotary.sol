@@ -10,12 +10,12 @@ contract StarNotary is ERC721 {
     struct Star {
         string name;
     }
-
+    
     // Implement Task 1 Add a name and symbol properties
     // name: Is a short name to your token
     // symbol: Is a short string like 'USD' -> 'American Dollar'
-    string public starName;
-    string public starSymbol;
+    string public name;
+    string public symbol;
 
     // mapping the Star with the Owner Address
     mapping(uint256 => Star) public tokenIdToStarInfo;
@@ -69,17 +69,23 @@ contract StarNotary is ERC721 {
         //2. You don't have to check for the price of the token (star)
         //3. Get the owner of the two tokens (ownerOf(_tokenId1), ownerOf(_tokenId1)
         //4. Use _transferFrom function to exchange the tokens.
+
         require(ownerOf(_tokenId1) == msg.sender, "You can't look at the details of the star you don't own.");
         require(ownerOf(_tokenId2) == msg.sender, "You can't look at the details of the star you don't own.");
         
-        tokenIdToStarInfo[_tokenId1] = tokenIdToStarInfo[_tokenId2];
-        tokenIdToStarInfo[_tokenId2] = tokenIdToStarInfo[_tokenId1];
-
         address owner1Address = ownerOf(_tokenId1);
         address owner2Address = ownerOf(_tokenId2);
 
-        transferStar(owner1Address, _tokenId2);
-        transferStar(owner2Address, _tokenId1);        
+        _transferFrom(owner1Address, msg.sender, _tokenId2); 
+        _transferFrom(owner2Address, msg.sender, _tokenId1); 
+
+        tokenIdToStarInfo[_tokenId1] = tokenIdToStarInfo[_tokenId2];
+        tokenIdToStarInfo[_tokenId2] = tokenIdToStarInfo[_tokenId1];
+
+        // TODO: Not sure if i should use _transferFrom inside the transferStar call or 
+        //       directly as i am doing above.. Wondering how to deal with balances ??
+        // transferStar(owner1Address, _tokenId2);
+        // transferStar(owner2Address, _tokenId1);        
     }
 
     // Implement Task 1 Transfer Stars
@@ -88,16 +94,16 @@ contract StarNotary is ERC721 {
         //2. Use the transferFrom(from, to, tokenId); function to transfer the Star
         require(ownerOf(_tokenId) == msg.sender, "Sender should be the owner of the token.");
 
-        uint256 starCost = starsForSale[_tokenId];
         address ownerAddress = ownerOf(_tokenId);
 
         _transferFrom(ownerAddress, _to1, _tokenId); // Move the star from owner to specified address (_to1)
-        address payable ownerAddressPayable = _make_payable(ownerAddress);
-        address payable toAddressPayable = _make_payable(_to1);        
-        ownerAddressPayable.transfer(starCost); // increase the balance of the owner by the cost of the star.
-        if(toAddressPayable.balance > starCost) {
-            toAddressPayable.transfer(_to1.balance - starCost); // Reduce the balance of the address who purchased the star.
-        }
+
+        // address payable ownerAddressPayable = _make_payable(ownerAddress);
+        // address payable toAddressPayable = _make_payable(_to1);        
+        // ownerAddressPayable.transfer(starCost); // increase the balance of the owner by the cost of the star.
+        // if(toAddressPayable.balance > starCost) {
+        //     toAddressPayable.transfer(_to1.balance - starCost); // Reduce the balance of the address who purchased the star.
+        // }
 
     }
 
