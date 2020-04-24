@@ -10,7 +10,6 @@ contract StarNotary is ERC721 {
     struct Star {
         string name;
     }
-    
     // Implement Task 1 Add a name and symbol properties
     // name: Is a short name to your token
     // symbol: Is a short string like 'USD' -> 'American Dollar'
@@ -22,7 +21,6 @@ contract StarNotary is ERC721 {
     // mapping the TokenId and price
     mapping(uint256 => uint256) public starsForSale;
 
-    
     // Create Star using the Struct
     function createStar(string memory _name, uint256 _tokenId) public { // Passing the name and tokenId as a parameters
         Star memory newStar = Star(_name); // Star is an struct so we are creating a new Star
@@ -59,8 +57,8 @@ contract StarNotary is ERC721 {
     function lookUptokenIdToStarInfo (uint _tokenId) public view returns (string memory) {
         //1. You should return the Star saved in tokenIdToStarInfo mapping
         require(ownerOf(_tokenId) == msg.sender, "You can't look at the details of the star you don't own.");
-        Star memory starInfo = tokenIdToStarInfo[_tokenId];   
-        return starInfo.name;        
+        Star memory starInfo = tokenIdToStarInfo[_tokenId];
+        return starInfo.name;
     }
 
     // Implement Task 1 Exchange Stars function
@@ -72,9 +70,9 @@ contract StarNotary is ERC721 {
         require((ownerOf(_tokenId1) == msg.sender) || (ownerOf(_tokenId2) == msg.sender), "You can't look at the details of the star you don't own.");
         address owner1Address = ownerOf(_tokenId1);
         address owner2Address = ownerOf(_tokenId2);
-        
-        _transferFrom(owner1Address, owner2Address, _tokenId1); 
-        _transferFrom(owner2Address, owner1Address, _tokenId2); 
+
+        _transferFrom(owner1Address, owner2Address, _tokenId1);
+        _transferFrom(owner2Address, owner1Address, _tokenId2);
 
     }
 
@@ -87,14 +85,6 @@ contract StarNotary is ERC721 {
         address ownerAddress = ownerOf(_tokenId);
 
         _transferFrom(ownerAddress, _to1, _tokenId); // Move the star from owner to specified address (_to1)
-
-        // address payable ownerAddressPayable = _make_payable(ownerAddress);
-        // address payable toAddressPayable = _make_payable(_to1);        
-        // ownerAddressPayable.transfer(starCost); // increase the balance of the owner by the cost of the star.
-        // if(toAddressPayable.balance > starCost) {
-        //     toAddressPayable.transfer(_to1.balance - starCost); // Reduce the balance of the address who purchased the star.
-        // }
-
     }
 
 }
