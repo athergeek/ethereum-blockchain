@@ -101,16 +101,7 @@ it('lets 2 users exchange stars', async() => {
     await instance.createStar('Awesome Star 1', tokenId1, {from: user1});
     await instance.createStar('Awesome Star 2', tokenId2, {from: user2});
 
-    let a = await instance.getApproved(tokenId1);  // What this method does ?
-    let b = await instance.getApproved(tokenId1); 
-    let c = await instance.ownerOf(tokenId1);  
-    let d = await instance.ownerOf(tokenId2);  
-    console.log(a); // prints 0x0000000000000000000000000000000000000000
-    console.log(b); // prints 0x0000000000000000000000000000000000000000
-    console.log(c); // This prints the address corresponding to accounts[0]
-    console.log(d); // This prints the address corresponding to accounts[1]
-    
-    instance.approve(user2, tokenId1); // Does't work :(
+    await instance.approve(user2, tokenId1, {from: user1});        
 
     await instance.exchangeStars(tokenId1, tokenId2);
     

@@ -69,23 +69,13 @@ contract StarNotary is ERC721 {
         //2. You don't have to check for the price of the token (star)
         //3. Get the owner of the two tokens (ownerOf(_tokenId1), ownerOf(_tokenId1)
         //4. Use _transferFrom function to exchange the tokens.
-
-        require(ownerOf(_tokenId1) == msg.sender, "You can't look at the details of the star you don't own.");
-        require(ownerOf(_tokenId2) == msg.sender, "You can't look at the details of the star you don't own.");
-        
+        require((ownerOf(_tokenId1) == msg.sender) || (ownerOf(_tokenId2) == msg.sender), "You can't look at the details of the star you don't own.");
         address owner1Address = ownerOf(_tokenId1);
         address owner2Address = ownerOf(_tokenId2);
+        
+        _transferFrom(owner1Address, owner2Address, _tokenId1); 
+        _transferFrom(owner2Address, owner1Address, _tokenId2); 
 
-        _transferFrom(owner1Address, msg.sender, _tokenId2); 
-        _transferFrom(owner2Address, msg.sender, _tokenId1); 
-
-        tokenIdToStarInfo[_tokenId1] = tokenIdToStarInfo[_tokenId2];
-        tokenIdToStarInfo[_tokenId2] = tokenIdToStarInfo[_tokenId1];
-
-        // TODO: Not sure if i should use _transferFrom inside the transferStar call or 
-        //       directly as i am doing above.. Wondering how to deal with balances ??
-        // transferStar(owner1Address, _tokenId2);
-        // transferStar(owner2Address, _tokenId1);        
     }
 
     // Implement Task 1 Transfer Stars
