@@ -20,5 +20,7 @@ Node v10.15.3
 
 Web3.js v1.2.1
 
-
 OpenZeppelin version: 2.1.2
+
+Contract Address on Rinkeby Network ::  0x62f60Bc9e0f8B00865Cc6847cb9988a9e240b954
+
