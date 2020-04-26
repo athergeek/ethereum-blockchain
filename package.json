@@ -1,0 +1,27 @@
+{
+  "name": "Decentralized Star Notary App",
+  "version": "1.0.0",
+  "description": "Ethereum DApp - Star Notary",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "openzeppelin-solidity": "^2.1.2",
+    "truffle-hdwallet-provider": "^1.0.17"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/athergeek/ethereum-blockchain.git"
+  },
+  "author": "Ather Ali",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/athergeek/ethereum-blockchain/issues"
+  },
+  "homepage": "https://github.com/athergeek/ethereum-blockchain#readme"
+}
